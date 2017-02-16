@@ -22,8 +22,8 @@ class Convert2PDF:
     # 支持的类型
     Const_Image_Format = [".jpg", ".jpeg", ".bmp", ".png"]
 
-    # 获取的书本
-    books = []
+    # 获取的文件夹
+    dirs = {}
 
     # a4的高宽
     a4_w, a4_h = landscape(A4)
@@ -39,45 +39,47 @@ class Convert2PDF:
     def begin(self):
         for parent, dirnames, filenames in os.walk(self.rootDir):
             for dirname in dirnames:
-                # 查找有无图片
-                self.findImage(os.path.join(parent, dirname))
+                # 假设每个文件夹下都有图片，都是一本书
+                dirData ={"name":"","pages":[],"isBook":False}
+                dirName = dirname.split('/')[0]
+                dirData['name'] = dirName
+                self.dirs[dirName] = dirData
 
-        print("共找到 %d 本书需要转换" % len(self.books))
-
-        index = 1
-        for book in self.books:
-            print("转换第 %d 本书[%s]开始..." % (index,book['name']))
-            beginTime = time.clock()
-            self.convert(book)
-            endTime = time.clock()
-            print("转换第 %d 本书[%s]结束，耗时 %f s " % (index ,book['name'],(endTime-beginTime)))
-            index += 1
-
-    #
-    # 找到对应目录下的图片文件
-    #
-    def findImage(self,dirPath):
-        book = {}
-        bookpages = []
-        makebook = False
-
-        for parent, dirnames, filenames in os.walk(dirPath):
+            # 查找有无图片
             for filename in filenames:
 
                 real_filename = os.path.join(parent, filename)
                 # 取父文件夹名称为书名
-                bookName = real_filename.split('/')[-2]
+                parentDirName = real_filename.split('/')[-2]
+
+                if parentDirName in self.dirs.keys():
+                    dirJsonData = self.dirs[parentDirName]
+                else:
+                    continue
 
                 # 检查是否图片
                 if real_filename and (os.path.splitext(real_filename)[1] in self.Const_Image_Format):
-                    bookpages.append(real_filename)
+                    # 将图片添加至书本
+                    dirJsonData['pages'].append(real_filename)
 
-                    if not makebook:
-                        book["name"] = bookName
-                        book["pages"] = bookpages
-                        makebook = True
-        if book:
-            self.books.append(book)
+                    # 如果该书的isbook 是false 改为true
+                    if not dirJsonData['isBook'] :
+                        dirJsonData['isBook'] = True
+
+        index = 1
+        for dirName in self.dirs.keys():
+
+            dirData = self.dirs[dirName]
+
+            if dirData['isBook']:
+                print("[*][转换PDF] : 开始. [名称] > [%s]" % (dirName))
+                beginTime = time.clock()
+                self.convert(dirData)
+                endTime = time.clock()
+                print("[*][转换PDF] : 结束. [名称] > [%s] , 耗时 %f s " % (dirName,(endTime-beginTime)))
+                index += 1
+
+        print("[*][所有转换完成] : 本次转换检索目录数 %d 个，共转换的PDF %d 本 " % (len(self.dirs),index-1))
 
     #
     # 开始转换
@@ -104,16 +106,16 @@ class Convert2PDF:
             else:
                 ratio = self.a4_h / img_h
 
-            #print("ratio="+ str(ratio) +" , im_w * ratio = " + str(img_w * ratio) +" , im_h * ratio = "+ str(img_h * ratio))
             data = Image(bookPage, img_w * ratio, img_h * ratio)
             bookPagesData.append(data)
             bookPagesData.append(PageBreak())
 
-        bookDoc.build(bookPagesData)
-
-        print("已转换 >>>> "+bookName)
-
-
+        try:
+            bookDoc.build(bookPagesData)
+            #print("已转换 >>>> " + bookName)
+        except Exception as err:
+            print("[*][转换PDF] : 错误. [名称] > [%s]" % (bookName))
+            print("[*] Exception >>>> ",err)
 
 class ImageTools :
 
