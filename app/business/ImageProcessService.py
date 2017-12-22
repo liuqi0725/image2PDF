@@ -38,6 +38,9 @@ class Convert2PDF:
     # 开始解析
     def begin(self):
         for parent, dirnames, filenames in os.walk(self.rootDir):
+            # 将按图片按名称的ASCII排序以避免错乱问题
+            filenames.sort()
+            
             for dirname in dirnames:
                 # 假设每个文件夹下都有图片，都是一本书
                 dirData ={"name":"","pages":[],"isBook":False}
