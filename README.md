@@ -88,8 +88,8 @@ def fileName_sort_process(filepath):
 
 convert_images2PDF_one_dir("/User/download/book",filename_sort_fn=fileName_sort_process)
 
-> filename_sort_fn 函数，只有在转化一个文件下的所有图片时可以用。（因为在测试中，我发现多文件夹批量操作的，在通过回调来决定排序是件很困难的事情，因为有很多条件要去判断当前是哪个文件夹的内容，要如何排序。反而我使用的多的地方在我用代码生成的文件名，一般以时间戳等方式，name数组的 sort 已经能够满足了。）
-
 ```
+
+> filename_sort_fn 函数，只有在转化一个文件下的所有图片时可以用。（因为在测试中，我发现多文件夹批量操作的，在通过回调来决定排序是件很困难的事情，因为有很多条件要去判断当前是哪个文件夹的内容，要如何排序。反而我使用的多的地方在我用代码生成的文件名，一般以时间戳等方式，name数组的 sort 已经能够满足了。）
 
 
