@@ -54,7 +54,7 @@ for file_name in file_names:
 ```
 
 
-所以我在 `Convert2PDF` 的构造函数入参中,新增了一个 `filename_sort_fn`
+所以我在 `Image2PDF` 的想`convert_images2PDF_one_dir`,新增了一个 `filename_sort_fn`
 用作在文件名排序时,进行回调处理。
 
 ```python
@@ -86,7 +86,9 @@ def fileName_sort_process(filepath):
     # return 必须为一个可以转换为整形的数据
     return name
 
-Convert2PDF("/User/download/book",fileName_sort_process)
+convert_images2PDF_one_dir("/User/download/book",filename_sort_fn=fileName_sort_process)
+
+> filename_sort_fn 函数，只有在转化一个文件下的所有图片时可以用。（因为在测试中，我发现多文件夹批量操作的，在通过回调来决定排序是件很困难的事情，因为有很多条件要去判断当前是哪个文件夹的内容，要如何排序。反而我使用的多的地方在我用代码生成的文件名，一般以时间戳等方式，name数组的 sort 已经能够满足了。）
 
 ```
 
