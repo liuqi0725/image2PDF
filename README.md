@@ -18,7 +18,9 @@
 
 ## 文件名排序
 
-大多数情况下,我根据 filename.sort() 进行排序,但是这种方式,不能解决复杂的命名规则。
+大多数情况下,我根据 filename.sort() 进行排序,已经可以满足大多数软件代码生成文件的逻辑。
+
+但是这种方式,不能解决复杂的命名规则。
 
 如: 
 ```python
@@ -40,18 +42,52 @@ for file_name in file_names:
     print(file_name)
     
 # 得到的是
-test_hello_img_1.jpg
-test_hello_img_11.jpg
-test_hello_img_2.jpg
-test_hello_img_21.jpg
-test_hello_img_22.jpg
-test_hello_img_3.jpg
-test_hello_img_4.jpg
-test_hello_img_5.jpg
+# test_hello_img_1.jpg
+# test_hello_img_11.jpg
+# test_hello_img_2.jpg
+# test_hello_img_21.jpg
+# test_hello_img_22.jpg
+# test_hello_img_3.jpg
+# test_hello_img_4.jpg
+# test_hello_img_5.jpg
 
 ```
 
 
+所以我在 `Convert2PDF` 的构造函数入参中,新增了一个 `filename_sort_fn`
+用作在文件名排序时,进行回调处理。
 
+```python
+
+# 使用
+
+# 如当前要转换的所有图片名如下
+file_names = [
+    "/User/download/book/test_hello_img_1.jpg",
+    "/User/download/book/test_hello_img_2.jpg",
+    "/User/download/book/test_hello_img_3.jpg",
+    "/User/download/book/test_hello_img_4.jpg",
+    "/User/download/book/test_hello_img_5.jpg",
+    "/User/download/book/test_hello_img_11.jpg",
+    "/User/download/book/test_hello_img_21.jpg",
+    "/User/download/book/test_hello_img_22.jpg",
+]
+
+# 提供给转换函数使用的回调。
+# 回调函数会返回 filepath , 包含文件路径的 filepath
+# 每一个文件名回调一次
+def fileName_sort_process(filepath):
+    # 希望对示例数据中的文件,按照 末尾的数字排序
+    # 那么回调函数就要截取这个数字
+    filenames = filepath.split("_")
+    # 取最后的 *.jpg
+    name = filenames[3].split(".")[0]
+    # name 因该为 1
+    # return 必须为一个可以转换为整形的数据
+    return name
+
+Convert2PDF("/User/download/book",fileName_sort_process)
+
+```
 
 
