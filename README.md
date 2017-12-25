@@ -15,6 +15,10 @@
 * 支持多重文件路径检索进行转换。
 * 支持jpg、png、bmp
 
+## 例子
+
+* 详见 test/filename_sort_test.py
+
 
 ## 文件名排序
 
