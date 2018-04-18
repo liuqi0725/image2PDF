@@ -24,6 +24,4 @@
 
 转换过程，最痛苦的莫过于文件名错乱导致的结果不理想。大多数情况下，我使用数组的.sort方式即可。但是对于复杂的文件名，这种方式不可取。
 
-[复杂文件名排序说明](https://github.com/liuqi0725/image2PDF/wiki/%E6%96%87%E4%BB%B6%E5%90%8D%E6%8E%92%E5%BA%8F)
-
-
+[复杂文件名排序说明](https://github.com/liuqi0725/image2PDF/wiki/复杂文件名排序)
